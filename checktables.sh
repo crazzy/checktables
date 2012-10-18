@@ -38,7 +38,7 @@ DBPASS="xxxx"
 ADMIN_EMAIL="root@localhost"
 
 # Programs
-MYSQL="/usr/local/bin/mysql"
+MYSQL="/usr/bin/mysql"
 
 # Fetch db list
 DATABASES=$(echo "SHOW DATABASES;" | $MYSQL -h $DBHOST -u $DBUSER -p$DBPASS | egrep -v '^(Database|information_schema$)')
