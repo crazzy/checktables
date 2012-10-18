@@ -45,21 +45,21 @@ DATABASES=$(echo "SHOW DATABASES;" | $MYSQL -h $DBHOST -u $DBUSER -p$DBPASS | eg
 
 for db in $DATABASES; do
 	# Fetch tables in db
-	tables=$(echo "SHOW TABLES FROM $db;" | $MYSQL -h $DBHOST -u $DBUSER -p$DBPASS | egrep -v '^Tables_in')
+	tables=$(echo "SHOW TABLES FROM \`$db\`;" | $MYSQL -h $DBHOST -u $DBUSER -p$DBPASS | egrep -v '^Tables_in')
 	for tbl in $tables; do
 		# Is CHECK TABLE possible on this table?
-		tbl_info=$(echo "SHOW CREATE TABLE $db.$tbl;" | $MYSQL -h $DBHOST -u $DBUSER -p$DBPASS)
+		tbl_info=$(echo "SHOW CREATE TABLE \`$db\`.\`$tbl\`;" | $MYSQL -h $DBHOST -u $DBUSER -p$DBPASS)
 		echo $tbl_info | grep -q ENGINE=MyISAM
 		if [ $? -eq 0 ]; then
 			# Check the table for errors
-			check_result=$(echo "CHECK TABLE $db.$tbl EXTENDED;" | $MYSQL -h $DBHOST -u $DBUSER -p$DBPASS)
+			check_result=$(echo "CHECK TABLE \`$db\`.\`$tbl\` EXTENDED;" | $MYSQL -h $DBHOST -u $DBUSER -p$DBPASS)
 			echo "$check_result" | tail -n1 | awk '{print $NF;}' | grep -q '^OK$'
 			if [ $? -ne 0 ]; then
 				# If there are any errors, send an email to the admin
 				echo "$db.$tbl BROKEN!" | mail -E -s "MySQL corrupt table!" $ADMIN_EMAIL
 			else
 				# Optimize the table and fuck the output
-				echo "OPTIMIZE TABLE $db.$tbl;" | $MYSQL -h $DBHOST -u $DBUSER -p$DBPASS 2>&1 > /dev/null
+				echo "OPTIMIZE TABLE \`$db\`.\`$tbl\`;" | $MYSQL -h $DBHOST -u $DBUSER -p$DBPASS 2>&1 > /dev/null
 			fi
 		fi
 		
