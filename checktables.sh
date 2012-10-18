@@ -32,7 +32,7 @@
 #
 
 # Config
-DBHOST="127.0.0.1"
+DBHOST="localhost"
 DBUSER="debian-sys-maint"
 DBPASS="xxxx"
 ADMIN_EMAIL="root@localhost"
